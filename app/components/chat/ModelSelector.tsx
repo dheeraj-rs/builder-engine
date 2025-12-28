@@ -10,7 +10,7 @@ interface ModelSelectorProps {
 
 const MODELS = [
   { value: 'anthropic' as const, label: 'Claude Sonnet 4.5' },
-  { value: 'google' as const, label: 'Gemini 2.0 Flash' },
+  { value: 'google' as const, label: 'Gemini Flash Lite (Latest)' },
 ];
 
 export function ModelSelector({ value, onChange, className }: ModelSelectorProps) {

@@ -42,8 +42,11 @@ export async function streamText(
     }));
 
     // use streaming API - returns AsyncGenerator directly
+
+    // model: 'gemini-2.5-flash',
+
     const stream = await ai.models.generateContentStream({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-lite-latest',
       contents,
       config: {
         maxOutputTokens: MAX_TOKENS,

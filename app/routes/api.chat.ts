@@ -47,12 +47,12 @@ async function chatAction({ context, request }: ActionFunctionArgs) {
         contentType: 'text/plain; charset=utf-8',
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
 
     throw new Response(null, {
       status: 500,
-      statusText: 'Internal Server Error',
+      statusText: error?.message || 'Internal Server Error',
     });
   }
 }
