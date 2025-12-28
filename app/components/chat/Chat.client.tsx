@@ -43,10 +43,10 @@ export function Chat() {
            */
           switch (type) {
             case 'success': {
-              return <div className="i-ph:check-bold text-bolt-elements-icon-success text-2xl" />;
+              return <div className="i-ph:check-bold text-builder-elements-icon-success text-2xl" />;
             }
             case 'error': {
-              return <div className="i-ph:warning-circle-bold text-bolt-elements-icon-error text-2xl" />;
+              return <div className="i-ph:warning-circle-bold text-builder-elements-icon-error text-2xl" />;
             }
           }
 
@@ -71,7 +71,21 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [chatStarted, setChatStarted] = useState(initialMessages.length > 0);
-  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>('anthropic');
+
+  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('selected_ai_provider');
+      return (saved as ModelProvider) || 'anthropic';
+    }
+
+    return 'anthropic';
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('selected_ai_provider', selectedProvider);
+    }
+  }, [selectedProvider]);
 
   const { showChat } = useStore(chatStore);
 

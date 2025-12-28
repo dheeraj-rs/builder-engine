@@ -13,7 +13,7 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
 
   return (
     <div className="flex">
-      <div className="flex border border-bolt-elements-borderColor rounded-md overflow-hidden">
+      <div className="flex border border-builder-elements-borderColor rounded-md overflow-hidden">
         <Button
           active={showChat}
           disabled={!canHideChat}
@@ -25,7 +25,7 @@ export function HeaderActionButtons({}: HeaderActionButtonsProps) {
         >
           <div className="i-bolt:chat text-sm" />
         </Button>
-        <div className="w-[1px] bg-bolt-elements-borderColor" />
+        <div className="w-[1px] bg-builder-elements-borderColor" />
         <Button
           active={showWorkbench}
           onClick={() => {
@@ -54,10 +54,10 @@ function Button({ active = false, disabled = false, children, onClick }: ButtonP
   return (
     <button
       className={classNames('flex items-center p-1.5', {
-        'bg-bolt-elements-item-backgroundDefault hover:bg-bolt-elements-item-backgroundActive text-bolt-elements-textTertiary hover:text-bolt-elements-textPrimary':
+        'bg-builder-elements-item-backgroundDefault hover:bg-builder-elements-item-backgroundActive text-builder-elements-textTertiary hover:text-builder-elements-textPrimary':
           !active,
-        'bg-bolt-elements-item-backgroundAccent text-bolt-elements-item-contentAccent': active && !disabled,
-        'bg-bolt-elements-item-backgroundDefault text-alpha-gray-20 dark:text-alpha-white-20 cursor-not-allowed':
+        'bg-builder-elements-item-backgroundAccent text-builder-elements-item-contentAccent': active && !disabled,
+        'bg-builder-elements-item-backgroundDefault text-alpha-gray-20 dark:text-alpha-white-20 cursor-not-allowed':
           disabled,
       })}
       onClick={onClick}

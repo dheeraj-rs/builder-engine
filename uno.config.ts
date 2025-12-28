@@ -5,7 +5,7 @@ import { defineConfig, presetIcons, presetUno, transformerDirectives } from 'uno
 
 const iconPaths = globSync('./icons/*.svg');
 
-const collectionName = 'bolt';
+const collectionName = 'builder';
 
 const customIconCollection = iconPaths.reduce(
   (acc, iconPath) => {
@@ -99,9 +99,9 @@ const COLOR_PRIMITIVES = {
 
 export default defineConfig({
   shortcuts: {
-    'bolt-ease-cubic-bezier': 'ease-[cubic-bezier(0.4,0,0.2,1)]',
-    'transition-theme': 'transition-[background-color,border-color,color] duration-150 bolt-ease-cubic-bezier',
-    kdb: 'bg-bolt-elements-code-background text-bolt-elements-code-text py-1 px-1.5 rounded-md',
+    'builder-ease-cubic-bezier': 'ease-[cubic-bezier(0.4,0,0.2,1)]',
+    'transition-theme': 'transition-[background-color,border-color,color] duration-150 builder-ease-cubic-bezier',
+    kdb: 'bg-builder-elements-code-background text-builder-elements-code-text py-1 px-1.5 rounded-md',
     'max-w-chat': 'max-w-[var(--chat-max-width)]',
   },
   rules: [
@@ -114,115 +114,115 @@ export default defineConfig({
   theme: {
     colors: {
       ...COLOR_PRIMITIVES,
-      bolt: {
+      builder: {
         elements: {
-          borderColor: 'var(--bolt-elements-borderColor)',
-          borderColorActive: 'var(--bolt-elements-borderColorActive)',
+          borderColor: 'var(--builder-elements-borderColor)',
+          borderColorActive: 'var(--builder-elements-borderColorActive)',
           background: {
             depth: {
-              1: 'var(--bolt-elements-bg-depth-1)',
-              2: 'var(--bolt-elements-bg-depth-2)',
-              3: 'var(--bolt-elements-bg-depth-3)',
-              4: 'var(--bolt-elements-bg-depth-4)',
+              1: 'var(--builder-elements-bg-depth-1)',
+              2: 'var(--builder-elements-bg-depth-2)',
+              3: 'var(--builder-elements-bg-depth-3)',
+              4: 'var(--builder-elements-bg-depth-4)',
             },
           },
-          textPrimary: 'var(--bolt-elements-textPrimary)',
-          textSecondary: 'var(--bolt-elements-textSecondary)',
-          textTertiary: 'var(--bolt-elements-textTertiary)',
+          textPrimary: 'var(--builder-elements-textPrimary)',
+          textSecondary: 'var(--builder-elements-textSecondary)',
+          textTertiary: 'var(--builder-elements-textTertiary)',
           code: {
-            background: 'var(--bolt-elements-code-background)',
-            text: 'var(--bolt-elements-code-text)',
+            background: 'var(--builder-elements-code-background)',
+            text: 'var(--builder-elements-code-text)',
           },
           button: {
             primary: {
-              background: 'var(--bolt-elements-button-primary-background)',
-              backgroundHover: 'var(--bolt-elements-button-primary-backgroundHover)',
-              text: 'var(--bolt-elements-button-primary-text)',
+              background: 'var(--builder-elements-button-primary-background)',
+              backgroundHover: 'var(--builder-elements-button-primary-backgroundHover)',
+              text: 'var(--builder-elements-button-primary-text)',
             },
             secondary: {
-              background: 'var(--bolt-elements-button-secondary-background)',
-              backgroundHover: 'var(--bolt-elements-button-secondary-backgroundHover)',
-              text: 'var(--bolt-elements-button-secondary-text)',
+              background: 'var(--builder-elements-button-secondary-background)',
+              backgroundHover: 'var(--builder-elements-button-secondary-backgroundHover)',
+              text: 'var(--builder-elements-button-secondary-text)',
             },
             danger: {
-              background: 'var(--bolt-elements-button-danger-background)',
-              backgroundHover: 'var(--bolt-elements-button-danger-backgroundHover)',
-              text: 'var(--bolt-elements-button-danger-text)',
+              background: 'var(--builder-elements-button-danger-background)',
+              backgroundHover: 'var(--builder-elements-button-danger-backgroundHover)',
+              text: 'var(--builder-elements-button-danger-text)',
             },
           },
           item: {
-            contentDefault: 'var(--bolt-elements-item-contentDefault)',
-            contentActive: 'var(--bolt-elements-item-contentActive)',
-            contentAccent: 'var(--bolt-elements-item-contentAccent)',
-            contentDanger: 'var(--bolt-elements-item-contentDanger)',
-            backgroundDefault: 'var(--bolt-elements-item-backgroundDefault)',
-            backgroundActive: 'var(--bolt-elements-item-backgroundActive)',
-            backgroundAccent: 'var(--bolt-elements-item-backgroundAccent)',
-            backgroundDanger: 'var(--bolt-elements-item-backgroundDanger)',
+            contentDefault: 'var(--builder-elements-item-contentDefault)',
+            contentActive: 'var(--builder-elements-item-contentActive)',
+            contentAccent: 'var(--builder-elements-item-contentAccent)',
+            contentDanger: 'var(--builder-elements-item-contentDanger)',
+            backgroundDefault: 'var(--builder-elements-item-backgroundDefault)',
+            backgroundActive: 'var(--builder-elements-item-backgroundActive)',
+            backgroundAccent: 'var(--builder-elements-item-backgroundAccent)',
+            backgroundDanger: 'var(--builder-elements-item-backgroundDanger)',
           },
           actions: {
-            background: 'var(--bolt-elements-actions-background)',
+            background: 'var(--builder-elements-actions-background)',
             code: {
-              background: 'var(--bolt-elements-actions-code-background)',
+              background: 'var(--builder-elements-actions-code-background)',
             },
           },
           artifacts: {
-            background: 'var(--bolt-elements-artifacts-background)',
-            backgroundHover: 'var(--bolt-elements-artifacts-backgroundHover)',
-            borderColor: 'var(--bolt-elements-artifacts-borderColor)',
+            background: 'var(--builder-elements-artifacts-background)',
+            backgroundHover: 'var(--builder-elements-artifacts-backgroundHover)',
+            borderColor: 'var(--builder-elements-artifacts-borderColor)',
             inlineCode: {
-              background: 'var(--bolt-elements-artifacts-inlineCode-background)',
-              text: 'var(--bolt-elements-artifacts-inlineCode-text)',
+              background: 'var(--builder-elements-artifacts-inlineCode-background)',
+              text: 'var(--builder-elements-artifacts-inlineCode-text)',
             },
           },
           messages: {
-            background: 'var(--bolt-elements-messages-background)',
-            linkColor: 'var(--bolt-elements-messages-linkColor)',
+            background: 'var(--builder-elements-messages-background)',
+            linkColor: 'var(--builder-elements-messages-linkColor)',
             code: {
-              background: 'var(--bolt-elements-messages-code-background)',
+              background: 'var(--builder-elements-messages-code-background)',
             },
             inlineCode: {
-              background: 'var(--bolt-elements-messages-inlineCode-background)',
-              text: 'var(--bolt-elements-messages-inlineCode-text)',
+              background: 'var(--builder-elements-messages-inlineCode-background)',
+              text: 'var(--builder-elements-messages-inlineCode-text)',
             },
           },
           icon: {
-            success: 'var(--bolt-elements-icon-success)',
-            error: 'var(--bolt-elements-icon-error)',
-            primary: 'var(--bolt-elements-icon-primary)',
-            secondary: 'var(--bolt-elements-icon-secondary)',
-            tertiary: 'var(--bolt-elements-icon-tertiary)',
+            success: 'var(--builder-elements-icon-success)',
+            error: 'var(--builder-elements-icon-error)',
+            primary: 'var(--builder-elements-icon-primary)',
+            secondary: 'var(--builder-elements-icon-secondary)',
+            tertiary: 'var(--builder-elements-icon-tertiary)',
           },
           preview: {
             addressBar: {
-              background: 'var(--bolt-elements-preview-addressBar-background)',
-              backgroundHover: 'var(--bolt-elements-preview-addressBar-backgroundHover)',
-              backgroundActive: 'var(--bolt-elements-preview-addressBar-backgroundActive)',
-              text: 'var(--bolt-elements-preview-addressBar-text)',
-              textActive: 'var(--bolt-elements-preview-addressBar-textActive)',
+              background: 'var(--builder-elements-preview-addressBar-background)',
+              backgroundHover: 'var(--builder-elements-preview-addressBar-backgroundHover)',
+              backgroundActive: 'var(--builder-elements-preview-addressBar-backgroundActive)',
+              text: 'var(--builder-elements-preview-addressBar-text)',
+              textActive: 'var(--builder-elements-preview-addressBar-textActive)',
             },
           },
           terminals: {
-            background: 'var(--bolt-elements-terminals-background)',
-            buttonBackground: 'var(--bolt-elements-terminals-buttonBackground)',
+            background: 'var(--builder-elements-terminals-background)',
+            buttonBackground: 'var(--builder-elements-terminals-buttonBackground)',
           },
-          dividerColor: 'var(--bolt-elements-dividerColor)',
+          dividerColor: 'var(--builder-elements-dividerColor)',
           loader: {
-            background: 'var(--bolt-elements-loader-background)',
-            progress: 'var(--bolt-elements-loader-progress)',
+            background: 'var(--builder-elements-loader-background)',
+            progress: 'var(--builder-elements-loader-progress)',
           },
           prompt: {
-            background: 'var(--bolt-elements-prompt-background)',
+            background: 'var(--builder-elements-prompt-background)',
           },
           sidebar: {
-            dropdownShadow: 'var(--bolt-elements-sidebar-dropdownShadow)',
-            buttonBackgroundDefault: 'var(--bolt-elements-sidebar-buttonBackgroundDefault)',
-            buttonBackgroundHover: 'var(--bolt-elements-sidebar-buttonBackgroundHover)',
-            buttonText: 'var(--bolt-elements-sidebar-buttonText)',
+            dropdownShadow: 'var(--builder-elements-sidebar-dropdownShadow)',
+            buttonBackgroundDefault: 'var(--builder-elements-sidebar-buttonBackgroundDefault)',
+            buttonBackgroundHover: 'var(--builder-elements-sidebar-buttonBackgroundHover)',
+            buttonText: 'var(--builder-elements-sidebar-buttonText)',
           },
           cta: {
-            background: 'var(--bolt-elements-cta-background)',
-            text: 'var(--bolt-elements-cta-text)',
+            background: 'var(--builder-elements-cta-background)',
+            text: 'var(--builder-elements-cta-text)',
           },
         },
       },
