@@ -136,17 +136,90 @@ export class ActionRunner {
       process.kill();
     });
 
+    // check if this is a dev server command
+    const isDevServer = this.#isDevServerCommand(action.content);
+    let devServerStarted = false;
+    let outputBuffer = '';
+
     process.output.pipeTo(
       new WritableStream({
         write(data) {
           console.log(data);
+
+          // accumulate output for dev server detection
+          if (isDevServer && !devServerStarted) {
+            outputBuffer += data.toLowerCase();
+          }
         },
       }),
     );
 
+    // for dev servers, monitor output and mark complete when started
+    if (isDevServer) {
+      const startDetectionPromise = new Promise<void>((resolve) => {
+        const checkInterval = setInterval(() => {
+          if (this.#detectDevServerStart(outputBuffer)) {
+            devServerStarted = true;
+            clearInterval(checkInterval);
+            clearTimeout(timeout);
+            logger.debug('Dev server detected as started');
+            resolve();
+          }
+        }, 100);
+
+        // timeout after 30 seconds - assume it started
+        const timeout = setTimeout(() => {
+          clearInterval(checkInterval);
+          logger.debug('Dev server timeout - assuming started');
+          resolve();
+        }, 30000);
+      });
+
+      /**
+       * Wait for dev server to start, then return (mark as complete)
+       * the process continues running in the background.
+       */
+      await startDetectionPromise;
+
+      return;
+    }
+
+    // for non-dev-server commands, wait for exit as before
     const exitCode = await process.exit;
 
     logger.debug(`Process terminated with code ${exitCode}`);
+  }
+
+  #isDevServerCommand(command: string): boolean {
+    const devPatterns = [
+      /npm\s+run\s+dev/,
+      /npm\s+run\s+start/,
+      /npm\s+start/,
+      /yarn\s+dev/,
+      /yarn\s+start/,
+      /pnpm\s+dev/,
+      /pnpm\s+start/,
+      /vite/,
+      /next\s+dev/,
+      /astro\s+dev/,
+    ];
+
+    return devPatterns.some((pattern) => pattern.test(command));
+  }
+
+  #detectDevServerStart(output: string): boolean {
+    const successPatterns = [
+      /local:\s*http/,
+      /localhost:/,
+      /:\d{4,5}/, // port numbers like :5173, :3000
+      /ready in/,
+      /server running/,
+      /compiled successfully/,
+      /built in/,
+      /listening on/,
+    ];
+
+    return successPatterns.some((pattern) => pattern.test(output));
   }
 
   async #runFileAction(action: ActionState) {
