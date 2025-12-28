@@ -6,6 +6,7 @@ import { IconButton } from '~/components/ui/IconButton';
 import { Workbench } from '~/components/workbench/Workbench.client';
 import { classNames } from '~/utils/classNames';
 import { Messages } from './Messages.client';
+import { ModelSelector, type ModelProvider } from './ModelSelector';
 import { SendButton } from './SendButton.client';
 
 import styles from './BaseChat.module.scss';
@@ -25,6 +26,8 @@ interface BaseChatProps {
   sendMessage?: (event: React.UIEvent, messageInput?: string) => void;
   handleInputChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   enhancePrompt?: () => void;
+  selectedProvider?: ModelProvider;
+  onProviderChange?: (provider: ModelProvider) => void;
 }
 
 const EXAMPLE_PROMPTS = [
@@ -54,6 +57,8 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
       handleInputChange,
       enhancePrompt,
       handleStop,
+      selectedProvider = 'anthropic',
+      onProviderChange,
     },
     ref,
   ) => {
@@ -136,7 +141,7 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                   <ClientOnly>
                     {() => (
                       <SendButton
-                        show={input.length > 0 || isStreaming}
+                        show={true}
                         isStreaming={isStreaming}
                         onClick={(event) => {
                           if (isStreaming) {
@@ -174,6 +179,13 @@ export const BaseChat = React.forwardRef<HTMLDivElement, BaseChatProps>(
                         )}
                       </IconButton>
                     </div>
+                    {onProviderChange && (
+                      <ClientOnly>
+                        {() => (
+                          <ModelSelector value={selectedProvider} onChange={onProviderChange} className="mx-auto" />
+                        )}
+                      </ClientOnly>
+                    )}
                     {input.length > 3 ? (
                       <div className="text-xs text-bolt-elements-textTertiary">
                         Use <kbd className="kdb">Shift</kbd> + <kbd className="kdb">Return</kbd> for a new line

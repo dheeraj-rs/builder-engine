@@ -12,6 +12,7 @@ import { fileModificationsToHTML } from '~/utils/diff';
 import { cubicEasingFn } from '~/utils/easings';
 import { createScopedLogger, renderLogger } from '~/utils/logger';
 import { BaseChat } from './BaseChat';
+import type { ModelProvider } from './ModelSelector';
 
 const toastAnimation = cssTransition({
   enter: 'animated fadeInRight',
@@ -70,6 +71,7 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [chatStarted, setChatStarted] = useState(initialMessages.length > 0);
+  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>('anthropic');
 
   const { showChat } = useStore(chatStore);
 
@@ -77,6 +79,9 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
 
   const { messages, isLoading, input, handleInputChange, setInput, stop, append } = useChat({
     api: '/api/chat',
+    body: {
+      provider: selectedProvider,
+    },
     onError: (error) => {
       logger.error('Request failed\n\n', error);
       toast.error('There was an error processing your request');
@@ -229,6 +234,8 @@ export const ChatImpl = memo(({ initialMessages, storeMessageHistory }: ChatProp
           scrollTextArea();
         });
       }}
+      selectedProvider={selectedProvider}
+      onProviderChange={setSelectedProvider}
     />
   );
 });
