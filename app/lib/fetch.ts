@@ -1,7 +1,8 @@
 type CommonRequest = Omit<RequestInit, 'body'> & { body?: URLSearchParams };
 
 export async function request(url: string, init?: CommonRequest) {
-  if (import.meta.env.DEV) {
+  const isDev = process.env.NODE_ENV === 'development';
+  if (isDev) {
     const nodeFetch = await import('node-fetch');
     const https = await import('node:https');
 

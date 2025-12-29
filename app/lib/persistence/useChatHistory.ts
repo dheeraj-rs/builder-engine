@@ -1,4 +1,6 @@
-import { useLoaderData, useNavigate } from '@remix-run/react';
+'use client';
+
+import { useRouter, useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { atom } from 'nanostores';
 import type { Message } from 'ai';
@@ -14,56 +16,83 @@ export interface ChatHistoryItem {
   timestamp: string;
 }
 
-const persistenceEnabled = !import.meta.env.VITE_DISABLE_PERSISTENCE;
+const persistenceEnabled = !process.env.NEXT_PUBLIC_DISABLE_PERSISTENCE;
 
-export const db = persistenceEnabled ? await openDatabase() : undefined;
+let dbInstance: IDBDatabase | undefined;
+let dbPromise: Promise<IDBDatabase | undefined> | undefined;
+
+async function initDB() {
+  if (dbInstance) return dbInstance;
+  if (dbPromise) return dbPromise;
+
+  if (!persistenceEnabled) return undefined;
+
+  dbPromise = openDatabase().then((db) => {
+    dbInstance = db;
+    return db;
+  });
+
+  return dbPromise;
+}
+
+// Export db for backward compatibility with Menu.client.tsx
+export async function getDB() {
+  return initDB();
+}
 
 export const chatId = atom<string | undefined>(undefined);
 export const description = atom<string | undefined>(undefined);
 
 export function useChatHistory() {
-  const navigate = useNavigate();
-  const { id: mixedId } = useLoaderData<{ id?: string }>();
+  const router = useRouter();
+  const params = useParams();
+  const mixedId = params?.id as string | undefined;
 
   const [initialMessages, setInitialMessages] = useState<Message[]>([]);
   const [ready, setReady] = useState<boolean>(false);
   const [urlId, setUrlId] = useState<string | undefined>();
 
   useEffect(() => {
-    if (!db) {
-      setReady(true);
+    async function loadHistory() {
+      const db = await initDB();
 
-      if (persistenceEnabled) {
-        toast.error(`Chat persistence is unavailable`);
+      if (!db) {
+        setReady(true);
+        if (persistenceEnabled) {
+          toast.error(`Chat persistence is unavailable`);
+        }
+        return;
       }
 
-      return;
-    }
+      if (mixedId) {
+        try {
+          const storedMessages = await getMessages(db, mixedId);
 
-    if (mixedId) {
-      getMessages(db, mixedId)
-        .then((storedMessages) => {
           if (storedMessages && storedMessages.messages.length > 0) {
             setInitialMessages(storedMessages.messages);
             setUrlId(storedMessages.urlId);
             description.set(storedMessages.description);
             chatId.set(storedMessages.id);
           } else {
-            navigate(`/`, { replace: true });
+            router.replace('/');
           }
 
           setReady(true);
-        })
-        .catch((error) => {
+        } catch (error: any) {
           toast.error(error.message);
-        });
+        }
+      }
     }
-  }, []);
+
+    loadHistory();
+  }, [mixedId, router]);
 
   return {
     ready: !mixedId || ready,
     initialMessages,
     storeMessageHistory: async (messages: Message[]) => {
+      const db = await initDB();
+
       if (!db || messages.length === 0) {
         return;
       }
@@ -71,10 +100,9 @@ export function useChatHistory() {
       const { firstArtifact } = workbenchStore;
 
       if (!urlId && firstArtifact?.id) {
-        const urlId = await getUrlId(db, firstArtifact.id);
-
-        navigateChat(urlId);
-        setUrlId(urlId);
+        const newUrlId = await getUrlId(db, firstArtifact.id);
+        navigateChat(newUrlId);
+        setUrlId(newUrlId);
       }
 
       if (!description.get() && firstArtifact?.title) {
@@ -83,7 +111,6 @@ export function useChatHistory() {
 
       if (initialMessages.length === 0 && !chatId.get()) {
         const nextId = await getNextId(db);
-
         chatId.set(nextId);
 
         if (!urlId) {
@@ -97,13 +124,7 @@ export function useChatHistory() {
 }
 
 function navigateChat(nextId: string) {
-  /**
-   * FIXME: Using the intended navigate function causes a rerender for <Chat /> that breaks the app.
-   *
-   * `navigate(`/chat/${nextId}`, { replace: true });`
-   */
   const url = new URL(window.location.href);
   url.pathname = `/chat/${nextId}`;
-
   window.history.replaceState({}, '', url);
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import { AnimatePresence, cubicBezier, motion } from 'framer-motion';
 
 interface SendButtonProps {

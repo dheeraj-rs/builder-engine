@@ -1,10 +1,12 @@
+'use client';
+
 import { motion, type Variants } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Dialog, DialogButton, DialogDescription, DialogRoot, DialogTitle } from '~/components/ui/Dialog';
 import { IconButton } from '~/components/ui/IconButton';
 import { ThemeSwitch } from '~/components/ui/ThemeSwitch';
-import { db, deleteById, getAll, chatId, type ChatHistoryItem } from '~/lib/persistence';
+import { getDB, deleteById, getAll, chatId, type ChatHistoryItem } from '~/lib/persistence';
 import { cubicEasingFn } from '~/utils/easings';
 import { logger } from '~/utils/logger';
 import { HistoryItem } from './HistoryItem';
@@ -39,20 +41,24 @@ export function Menu() {
   const [open, setOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState<DialogContent>(null);
 
-  const loadEntries = useCallback(() => {
-    if (db) {
-      getAll(db)
+  const loadEntries = useCallback(async () => {
+    const database = await getDB();
+
+    if (database) {
+      getAll(database)
         .then((list) => list.filter((item) => item.urlId && item.description))
         .then(setList)
         .catch((error) => toast.error(error.message));
     }
   }, []);
 
-  const deleteItem = useCallback((event: React.UIEvent, item: ChatHistoryItem) => {
+  const deleteItem = useCallback(async (event: React.UIEvent, item: ChatHistoryItem) => {
     event.preventDefault();
 
-    if (db) {
-      deleteById(db, item.id)
+    const database = await getDB();
+
+    if (database) {
+      deleteById(database, item.id)
         .then(() => {
           loadEntries();
 
@@ -66,7 +72,7 @@ export function Menu() {
           logger.error(error);
         });
     }
-  }, []);
+  }, [loadEntries]);
 
   const closeDialog = () => {
     setDialogContent(null);

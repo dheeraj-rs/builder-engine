@@ -1,19 +1,15 @@
-import { type ActionFunctionArgs } from '@remix-run/cloudflare';
+import { NextRequest, NextResponse } from 'next/server';
 import { MAX_RESPONSE_SEGMENTS, MAX_TOKENS } from '~/lib/.server/llm/constants';
 import { CONTINUE_PROMPT } from '~/lib/.server/llm/prompts';
 import { streamText, type Messages, type StreamingOptions, type AIProvider } from '~/lib/.server/llm/stream-text';
 import SwitchableStream from '~/lib/.server/llm/switchable-stream';
 
-export async function action(args: ActionFunctionArgs) {
-  return chatAction(args);
-}
-
-async function chatAction({ context, request }: ActionFunctionArgs) {
-  const { messages, provider } = await request.json<{ messages: Messages; provider?: AIProvider }>();
-
-  const stream = new SwitchableStream();
-
+export async function POST(request: NextRequest) {
   try {
+    const { messages, provider } = await request.json() as { messages: Messages; provider?: AIProvider };
+
+    const stream = new SwitchableStream();
+
     const options: StreamingOptions = {
       onFinish: async ({ text: content, finishReason }) => {
         if (finishReason !== 'length') {
@@ -31,28 +27,28 @@ async function chatAction({ context, request }: ActionFunctionArgs) {
         messages.push({ role: 'assistant', content });
         messages.push({ role: 'user', content: CONTINUE_PROMPT });
 
-        const result = await streamText(messages, context.cloudflare.env, provider, options);
+        const result = await streamText(messages, provider, options);
 
         return stream.switchSource(result.toAIStream());
       },
     };
 
-    const result = await streamText(messages, context.cloudflare.env, provider, options);
+    const result = await streamText(messages, provider, options);
 
     stream.switchSource(result.toAIStream());
 
     return new Response(stream.readable, {
       status: 200,
       headers: {
-        contentType: 'text/plain; charset=utf-8',
+        'Content-Type': 'text/plain; charset=utf-8',
       },
     });
   } catch (error: any) {
-    console.log(error);
+    console.error('Chat API error:', error);
 
-    throw new Response(null, {
-      status: 500,
-      statusText: error?.message || 'Internal Server Error',
-    });
+    return NextResponse.json(
+      { error: error?.message || 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

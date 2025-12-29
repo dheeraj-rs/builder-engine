@@ -26,13 +26,12 @@ export type AIProvider = 'anthropic' | 'google';
 
 export async function streamText(
   messages: Messages,
-  env: Env,
   provider: AIProvider = 'anthropic',
   options?: StreamingOptions,
 ) {
   if (provider === 'google') {
     // server-side Google GenAI SDK implementation
-    const apiKey = getGoogleAPIKey(env);
+    const apiKey = getGoogleAPIKey({} as Env);
     const ai = new GoogleGenAI({ apiKey });
 
     // convert messages to Google format
@@ -96,7 +95,7 @@ export async function streamText(
   }
 
   // use Anthropic with AI SDK
-  const model = getAnthropicModel(getAPIKey(env));
+  const model = getAnthropicModel(getAPIKey({} as Env));
 
   return _streamText({
     model,

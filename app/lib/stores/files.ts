@@ -1,8 +1,8 @@
 import type { PathWatcherEvent, WebContainer } from '@webcontainer/api';
 import { getEncoding } from 'istextorbinary';
 import { map, type MapStore } from 'nanostores';
-import { Buffer } from 'node:buffer';
-import * as nodePath from 'node:path';
+import { Buffer } from 'buffer';
+import * as nodePath from 'path';
 import { bufferWatchEvents } from '~/utils/buffer';
 import { WORK_DIR } from '~/utils/constants';
 import { computeFileModifications } from '~/utils/diff';
@@ -40,12 +40,12 @@ export class FilesStore {
    * Needs to be reset when the user sends another message and all changes have to be submitted
    * for the model to be aware of the changes.
    */
-  #modifiedFiles: Map<string, string> = import.meta.hot?.data.modifiedFiles ?? new Map();
+  #modifiedFiles: Map<string, string> = new Map();
 
   /**
    * Map of files that matches the state of WebContainer.
    */
-  files: MapStore<FileMap> = import.meta.hot?.data.files ?? map({});
+  files: MapStore<FileMap> = map({});
 
   get filesCount() {
     return this.#size;
@@ -54,10 +54,7 @@ export class FilesStore {
   constructor(webcontainerPromise: Promise<WebContainer>) {
     this.#webcontainer = webcontainerPromise;
 
-    if (import.meta.hot) {
-      import.meta.hot.data.files = this.files;
-      import.meta.hot.data.modifiedFiles = this.#modifiedFiles;
-    }
+    // Note: Vite HMR not available in Next.js
 
     this.#init();
   }

@@ -13,11 +13,24 @@ const highlighterOptions = {
   themes: ['light-plus', 'dark-plus'],
 };
 
-const shellHighlighter: HighlighterGeneric<BundledLanguage, BundledTheme> =
-  import.meta.hot?.data.shellHighlighter ?? (await createHighlighter(highlighterOptions));
+let shellHighlighterInstance: HighlighterGeneric<BundledLanguage, BundledTheme> | undefined;
+let shellHighlighterPromise: Promise<HighlighterGeneric<BundledLanguage, BundledTheme>> | undefined;
 
-if (import.meta.hot) {
-  import.meta.hot.data.shellHighlighter = shellHighlighter;
+async function getShellHighlighter() {
+  if (shellHighlighterInstance) {
+    return shellHighlighterInstance;
+  }
+
+  if (shellHighlighterPromise) {
+    return shellHighlighterPromise;
+  }
+
+  shellHighlighterPromise = createHighlighter(highlighterOptions).then((highlighter) => {
+    shellHighlighterInstance = highlighter;
+    return highlighter;
+  });
+
+  return shellHighlighterPromise;
 }
 
 interface ArtifactProps {
@@ -46,7 +59,7 @@ export const Artifact = memo(({ messageId }: ArtifactProps) => {
     if (actions.length && !showActions && !userToggledActions.current) {
       setShowActions(true);
     }
-  }, [actions]);
+  }, [actions, showActions]);
 
   return (
     <div className="artifact border border-builder-elements-borderColor flex flex-col overflow-hidden rounded-lg w-full transition-border duration-150">
@@ -107,15 +120,21 @@ interface ShellCodeBlockProps {
 }
 
 function ShellCodeBlock({ classsName, code }: ShellCodeBlockProps) {
+  const [html, setHtml] = useState('');
+
+  useEffect(() => {
+    getShellHighlighter().then((highlighter) => {
+      setHtml(highlighter.codeToHtml(code, {
+        lang: 'shell',
+        theme: 'dark-plus',
+      }));
+    });
+  }, [code]);
+
   return (
     <div
       className={classNames('text-xs', classsName)}
-      dangerouslySetInnerHTML={{
-        __html: shellHighlighter.codeToHtml(code, {
-          lang: 'shell',
-          theme: 'dark-plus',
-        }),
-      }}
+      dangerouslySetInnerHTML={{ __html: html }}
     ></div>
   );
 }
